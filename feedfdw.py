@@ -1,18 +1,3 @@
-"""
-    CREATE SERVER feed_srv foreign data wrapper multicorn options (
-        wrapper 'multicorn.feedfdw.FeedFdw'
-    );
-
-    CREATE FOREIGN TABLE example_rss (
-        "pubDate" timestamp,
-        description character varying,
-        title character varying,
-        link character varying
-    ) server feed_srv options (
-        url     'http://example.org/rss/'
-    );
-"""
-
 from . import ForeignDataWrapper
 from datetime import datetime, timedelta
 from logging import ERROR, WARNING
@@ -21,30 +6,14 @@ import json
 import feedparser
 
 
-
-
 class FeedFdw(ForeignDataWrapper):
-    """An rss foreign data wrapper.
-
-    The following options are accepted:
-
-    url --  The rss feed urls.
-
-    The columns named are parsed, and are used as xpath expression on
-    each item xml node. Exemple: a column named "pubDate" would return the
-    pubDate element of an rss item.
-
-    """
-
     def __init__(self, options, columns):
         super(FeedFdw, self).__init__(options, columns)
         self.url = options.get('url', None)
         if self.url is None:
-            log_to_postgres("You MUST set an url when creating the table!",
-                            ERROR)
+            log_to_postgres("You musT set an url when creating the table.", ERROR)
 
     def execute(self, quals, columns):
-        """Quals are ignored."""
         try:
             entries = []
 
@@ -53,6 +22,8 @@ class FeedFdw(ForeignDataWrapper):
             for e in d.entries:
                 entry = []
                 """
+                prob should switch these to named entries?
+
                 entry.append(["id",          e.id])
                 entry.append(["link",        e.link])
                 entry.append(["title",       e.title])
