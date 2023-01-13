@@ -39,8 +39,15 @@ class FeedFdw(ForeignDataWrapper):
                 entry.append(e.published)
                 entry.append(e.updated)
                 entry.append(e.summary)
-                entry.append(e.content[0].value)
-
+                if e.content:
+                    entry.append(e.content[0].value)
+                else:
+                    entry.append('')
+#                if e.description:
+#                    entry.append(e.description[0].value)
+#                else:
+#                    entry.append(e.description[0].value)
+#
                 entries.append(entry)
                 
             return entries
